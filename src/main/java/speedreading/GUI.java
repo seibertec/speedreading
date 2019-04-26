@@ -13,7 +13,7 @@ public class GUI extends javax.swing.JFrame {
         initComponents();
     }
 
-    // Lah-lah land!!!
+    // Lah-lah land !!!
     
     /**
      * This method is called from within the constructor to initialize the form.
