@@ -22,7 +22,7 @@ public class MainClassTest {
         // get location of test file
         String pathToTestFile = getClass().getResource("/textToRead-failure.txt").getFile();
         MainClass.StatisticsResult statisticsResult = MainClass.countWords(pathToTestFile);
-        System.out.println(statisticsResult);
+        assertNull(statisticsResult);
     }
 
     @Test

@@ -1,11 +1,6 @@
 package speedreading;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.Scanner;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GUI extends javax.swing.JFrame {
@@ -145,7 +140,7 @@ public class GUI extends javax.swing.JFrame {
         if (chooser.showOpenDialog(open) == JFileChooser.APPROVE_OPTION) {
             this.fileName = chooser.getSelectedFile().getAbsolutePath();  //Path wird Kopiert
             mainLabel.setText("Chosen file: " + this.fileName);
-            this.statistics = MainClass.countWords(fileName);  
+            this.statistics = MainClass.countWords(fileName);
             statistikButton.setEnabled(true);
             wpmButton.setEnabled(true);
             startButton.setEnabled(true);
@@ -154,58 +149,90 @@ public class GUI extends javax.swing.JFrame {
 
     private void statistikButtonClicked(java.awt.event.ActionEvent evt) {
 
-        JOptionPane optionPane = new JOptionPane();
-        optionPane.setMessage(new Object[]{
-            "#characters: " + this.statistics.getCharCount(),
-            "#words: " + this.statistics.getWordCount(),
-            "#sentences: " + this.statistics.getSentenceCount(),});
-        optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
-        optionPane.setOptionType(JOptionPane.DEFAULT_OPTION);
-        JDialog dialog = optionPane.createDialog(this, "Text statistic");
-        dialog.setVisible(true);
+        JOptionPane.showMessageDialog(
+                this,
+                new Object[]{
+                        "#characters: " + this.statistics.getCharCount(),
+                        "#words: " + this.statistics.getWordCount(),
+                        "#sentences: " + this.statistics.getSentenceCount()
+                },
+                "Document statistics",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+
+//        todo: Remove
+//        JOptionPane optionPane = new JOptionPane();
+//        optionPane.setMessage(new Object[]{
+//                "#characters: " + this.statistics.getCharCount(),
+//                "#words: " + this.statistics.getWordCount(),
+//                "#sentences: " + this.statistics.getSentenceCount(),});
+//        optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
+//        optionPane.setOptionType(JOptionPane.DEFAULT_OPTION);
+//        JDialog dialog = optionPane.createDialog(this, "Text statistic");
+//        dialog.setVisible(true);
     }
 
     private void wpmButtonClicked(java.awt.event.ActionEvent evt) {
-        JOptionPane optionPane = new JOptionPane();
-        JSlider slider = getSlider(optionPane);
-        optionPane.setMessage(new Object[]{"Select Words/min: ", slider});
-        optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
-        optionPane.setOptionType(JOptionPane.OK_CANCEL_OPTION);
-        JDialog dialog = optionPane.createDialog(this, "My Slider");
-        dialog.setVisible(true);
-        // hint on conversion problems!!
-        // Integer -> int
-        int wpm = ((Integer) optionPane.getInputValue()).intValue();
-        this.milisec = (int) ((60.0 / wpm) * 1000.0);
-        mainLabel.setText("Chosen wpm: " + wpm);
+        String title = "Select words per minutes (wpm)";
+        JSlider slider = getSlider();
+        int dialogResponse = JOptionPane.showOptionDialog
+                (this,                  // I'm within a JFrame here
+                        slider,
+                        title,
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null, null, null
+                );
+        if (JOptionPane.OK_OPTION == dialogResponse) {
+            int wpm = slider.getValue();
+            this.milisec = (int) ((60.0 / wpm) * 1000.0);
+            this.mainLabel.setText("Chosen wpm: " + wpm);
+        }
+
+//        todo: Remove
+//        JOptionPane optionPane = new JOptionPane();
+//        JSlider slider = getSlider(optionPane);
+//        optionPane.setMessage(new Object[]{"Select Words/min: ", slider});
+//        optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
+//        optionPane.setOptionType(JOptionPane.OK_CANCEL_OPTION);
+//        JDialog dialog = optionPane.createDialog(this, "My Slider");
+//        dialog.setVisible(true);
+//        // hint on conversion problems!!
+//        // Integer -> int
+//        int wpm = ((Integer) optionPane.getInputValue()).intValue();
+//        this.milisec = (int) ((60.0 / wpm) * 1000.0);
+//        mainLabel.setText("Chosen wpm: " + wpm);
     }
 
-    static JSlider getSlider(final JOptionPane optionPane) {
+    private JSlider getSlider() {
         JSlider slider = new JSlider(JSlider.HORIZONTAL, 0, 700, 0);
         slider.setMajorTickSpacing(100);
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
-        ChangeListener changeListener = new ChangeListener() {
-            public void stateChanged(ChangeEvent changeEvent) {
-                JSlider theSlider = (JSlider) changeEvent.getSource();
-                if (!theSlider.getValueIsAdjusting()) {
-                    optionPane.setInputValue(new Integer(theSlider.getValue()));
-                }
-            }
-        };
-        slider.addChangeListener(changeListener);
         return slider;
+//        todo: Remove
+//        ChangeListener changeListener = new ChangeListener() {
+//            public void stateChanged(ChangeEvent changeEvent) {
+//                JSlider theSlider = (JSlider) changeEvent.getSource();
+//                if (!theSlider.getValueIsAdjusting()) {
+//                    optionPane.setInputValue(theSlider.getValue());
+//                }
+//            }
+//        };
+//        slider.addChangeListener(changeListener);
     }
 
-    private void startButtonClicked(java.awt.event.ActionEvent evt){
-        this.myThread = new Thread(new Reader(this.fileName, this.milisec));
+    private void startButtonClicked(java.awt.event.ActionEvent evt) {
+        this.myThread = new Thread(new GuiReader(this.fileName, this.milisec));
         this.myThread.start();
         stopButton.setEnabled(true);
+        startButton.setEnabled(false);
     }
 
     private void stopButtonClicked(java.awt.event.ActionEvent evt) {
         this.myThread.stop();
-        
+        stopButton.setEnabled(false);
+        startButton.setEnabled(true);
     }
 
     /**
@@ -243,52 +270,21 @@ public class GUI extends javax.swing.JFrame {
         });
     }
 
-    public class Reader implements Runnable {
-
-        private String fileName;
-        private int milisec;
-
-        public Reader(String fileName, int milisec) {
-            this.fileName = fileName;
-            this.milisec = milisec;
+    /*
+        Create a sub class of the standard reader and override the readout
+        method to read the passed word to the GUI.
+     */
+    private class GuiReader extends Reader {
+        GuiReader(String fileName, int milisec) {
+            super(fileName, milisec);
         }
 
-        public void run() {
-            Scanner in = null;     //Scanner to read the file at chosen location
-            try {
-                in = new Scanner(new FileReader(fileName));
-            } catch (FileNotFoundException e) {   //ignore exception
-                e.printStackTrace();    //used to identify problems
-            }
-            int i = 0;       //Number of words in document
-            while (in.hasNextLine()) {        //read every line of file
-                in.next();      //move to next word
-                i++;            //increment word counter
-            }
-            in.close();     //Close Scanner after words have been counted
-
-            try {
-                in = new Scanner(new FileReader(fileName));     //New Scanner to start at top of file
-            } catch (FileNotFoundException e) {   //ignore exception
-                e.printStackTrace();    //used to identify problems
-            }
-            String[] word = new String[i];      //Array stores each word
-            int pause = milisec;
-            for (int k = 0; k < i; k++) { //loop cycles through every word in file
-                word[k] = in.next();
-                mainLabel.setText(word[k]);  //Set the word in the text pane to the word read from file
-                sleep(pause);     //call sleep method to add a pause after the word.
-            }
+        @Override
+        protected void readout(String word) {
+            mainLabel.setText(word);  //Set the word in the text pane to the word read from file
         }
     }
 
-    private void sleep(int i) {     //Adds a pause between words. i changes length of pause
-        try {
-            Thread.sleep(i);        //sleep thread for pause+n milliseconds
-        } catch (InterruptedException e) {   //exception needed for sleep
-            //do nothing
-        }
-    }
 
     // Variables declaration - do not modify
     private javax.swing.JButton chooseFileButton;
