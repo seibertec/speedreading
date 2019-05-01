@@ -49,13 +49,9 @@ public class Reader implements Runnable {
     }
 
     public static void main(String[] args) {
-        if (args == null || args.length != 1) {
-            System.out.println("Usage: genau ein Argument für den Filename angeben, Du Dubbel!");
-        } else {
-            String fileName = args[0];
-            int milisec = 500;
-            System.out.println("Ich lese " + fileName + " mit " + milisec + "ms Pause");
-            new Reader(fileName, milisec).run();
-        }
+        String fileName = "src/test/resources/textToRead-success.txt";
+        int milisec = 500;
+        System.out.println("Ich lese " + fileName + " mit " + milisec + "ms Pause");
+        new Reader(fileName, milisec).run();
     }
 }
