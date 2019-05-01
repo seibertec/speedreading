@@ -33,6 +33,15 @@ public class MainClass {
         public int getSentenceCount() {
             return sentenceCount;
         }
+
+        @Override
+        public String toString() {
+            return "StatisticsResult{" +
+                    "charCount=" + charCount +
+                    ", wordCount=" + wordCount +
+                    ", sentenceCount=" + sentenceCount +
+                    '}';
+        }
     }
 
     public static void main(String[] args) {
@@ -90,15 +99,20 @@ public class MainClass {
                 //Reading next line into currentLine
                 currentLine = reader.readLine();
             }
+            // Reading successful, return our result
+            return new StatisticsResult(charCount, wordCount, sentenceCount);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {
-                reader.close();           //Closing the reader
+                if(reader != null) {
+                    reader.close();           //Closing the reader - if available
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return new StatisticsResult(charCount, wordCount, sentenceCount);
+
+        return null; // error case, better propagate the exception
     }
 }
