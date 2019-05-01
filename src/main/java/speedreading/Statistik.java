@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package speedreading;
 
 /**
@@ -11,12 +6,12 @@ package speedreading;
  */
 public class Statistik extends javax.swing.JDialog {
 
-    private MainClass.StatisticsResult statics;
+    private StatisticsReader.StatisticsResult statics;
 
     /**
      * Creates new form Statistik
      */
-    public Statistik(java.awt.Frame parent, boolean modal, MainClass.StatisticsResult staticsResult) {
+    public Statistik(java.awt.Frame parent, boolean modal, StatisticsReader.StatisticsResult staticsResult) {
         super(parent, modal);
         this.statics = staticsResult;
         initComponents();
@@ -160,7 +155,7 @@ public class Statistik extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                Statistik dialog = new Statistik(new javax.swing.JFrame(), true, new MainClass.StatisticsResult(0, 0, 0));
+                Statistik dialog = new Statistik(new javax.swing.JFrame(), true, new StatisticsReader.StatisticsResult(0, 0, 0));
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

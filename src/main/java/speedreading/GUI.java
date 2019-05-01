@@ -5,7 +5,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GUI extends javax.swing.JFrame {
 
-    private MainClass.StatisticsResult statistics;
+    private StatisticsReader.StatisticsResult statistics;
     private String fileName;
     private Thread myThread = null;
     private int milisec = 1600;
@@ -14,7 +14,7 @@ public class GUI extends javax.swing.JFrame {
      * Creates new form GUI
      */
     public GUI() {
-        this.statistics = new MainClass.StatisticsResult(0, 0, 0);
+        this.statistics = new StatisticsReader.StatisticsResult(0, 0, 0);
         initComponents();
         statistikButton.setEnabled(false);
         wpmButton.setEnabled(false);
@@ -140,7 +140,7 @@ public class GUI extends javax.swing.JFrame {
         if (chooser.showOpenDialog(open) == JFileChooser.APPROVE_OPTION) {
             this.fileName = chooser.getSelectedFile().getAbsolutePath();  //Path wird Kopiert
             mainLabel.setText("Chosen file: " + this.fileName);
-            this.statistics = MainClass.countWords(fileName);
+            this.statistics = StatisticsReader.readStatistics(fileName);
             statistikButton.setEnabled(true);
             wpmButton.setEnabled(true);
             startButton.setEnabled(true);
@@ -159,17 +159,6 @@ public class GUI extends javax.swing.JFrame {
                 "Document statistics",
                 JOptionPane.INFORMATION_MESSAGE
         );
-
-//        todo: Remove
-//        JOptionPane optionPane = new JOptionPane();
-//        optionPane.setMessage(new Object[]{
-//                "#characters: " + this.statistics.getCharCount(),
-//                "#words: " + this.statistics.getWordCount(),
-//                "#sentences: " + this.statistics.getSentenceCount(),});
-//        optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
-//        optionPane.setOptionType(JOptionPane.DEFAULT_OPTION);
-//        JDialog dialog = optionPane.createDialog(this, "Text statistic");
-//        dialog.setVisible(true);
     }
 
     private void wpmButtonClicked(java.awt.event.ActionEvent evt) {
@@ -188,20 +177,6 @@ public class GUI extends javax.swing.JFrame {
             this.milisec = (int) ((60.0 / wpm) * 1000.0);
             this.mainLabel.setText("Chosen wpm: " + wpm);
         }
-
-//        todo: Remove
-//        JOptionPane optionPane = new JOptionPane();
-//        JSlider slider = getSlider(optionPane);
-//        optionPane.setMessage(new Object[]{"Select Words/min: ", slider});
-//        optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
-//        optionPane.setOptionType(JOptionPane.OK_CANCEL_OPTION);
-//        JDialog dialog = optionPane.createDialog(this, "My Slider");
-//        dialog.setVisible(true);
-//        // hint on conversion problems!!
-//        // Integer -> int
-//        int wpm = ((Integer) optionPane.getInputValue()).intValue();
-//        this.milisec = (int) ((60.0 / wpm) * 1000.0);
-//        mainLabel.setText("Chosen wpm: " + wpm);
     }
 
     private JSlider getSlider() {
@@ -210,16 +185,6 @@ public class GUI extends javax.swing.JFrame {
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
         return slider;
-//        todo: Remove
-//        ChangeListener changeListener = new ChangeListener() {
-//            public void stateChanged(ChangeEvent changeEvent) {
-//                JSlider theSlider = (JSlider) changeEvent.getSource();
-//                if (!theSlider.getValueIsAdjusting()) {
-//                    optionPane.setInputValue(theSlider.getValue());
-//                }
-//            }
-//        };
-//        slider.addChangeListener(changeListener);
     }
 
     private void startButtonClicked(java.awt.event.ActionEvent evt) {

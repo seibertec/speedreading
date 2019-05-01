@@ -1,7 +1,6 @@
 package speedreading;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
@@ -32,35 +31,6 @@ public class Reader implements Runnable {
         } catch (Exception e) {   //ignore exception
             e.printStackTrace();    //used to identify problems
         }
-
-//        todo: Remove
-//        Scanner in = null;     //Scanner to read the file at chosen location
-//        try {
-//            in = new Scanner(new FileReader(fileName));
-//        } catch (FileNotFoundException e) {   //ignore exception
-//            e.printStackTrace();    //used to identify problems
-//        }
-//        int i = 0;       //Number of words in document
-//        while (in.hasNextLine()) {        //read every line of file
-//            in.next();      //move to next word
-//            i++;            //increment word counter
-//        }
-//        in.close();     //Close Scanner after words have been counted
-//
-//        try {
-//            in = new Scanner(new FileReader(fileName));     //New Scanner to start at top of file
-//        } catch (FileNotFoundException e) {   //ignore exception
-//            e.printStackTrace();    //used to identify problems
-//        }
-//
-//        // carsten: do need to store in an array, only the last word is required
-//        //            String[] word = new String[i];      //Array stores each word
-//        int pause = milisec;
-//        for (int k = 0; k < i; k++) { //loop cycles through every word in file
-//            String nextWord = in.next();
-//            readout(nextWord);
-//            sleep(pause);     //call sleep method to add a pause after the word.
-//        }
     }
 
     /*

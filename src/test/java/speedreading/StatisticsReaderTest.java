@@ -1,17 +1,16 @@
 package speedreading;
 
 import org.junit.Test;
-import sun.applet.Main;
 
 import static org.junit.Assert.*;
 
-public class MainClassTest {
+public class StatisticsReaderTest {
 
     @Test
     public void countWordsSuccess() {
         // get location of test file
         String pathToTestFile = getClass().getResource("/textToRead-success.txt").getFile();
-        MainClass.StatisticsResult statisticsResult = MainClass.countWords(pathToTestFile);
+        StatisticsReader.StatisticsResult statisticsResult = StatisticsReader.readStatistics(pathToTestFile);
         assertEquals(713, statisticsResult.getCharCount());
         assertEquals(120, statisticsResult.getWordCount());
         assertEquals(10, statisticsResult.getSentenceCount());
@@ -19,7 +18,7 @@ public class MainClassTest {
 
     @Test
     public void countWordsNonExistingFile() {
-        MainClass.StatisticsResult statisticsResult = MainClass.countWords("does-not-exists");
+        StatisticsReader.StatisticsResult statisticsResult = StatisticsReader.readStatistics("does-not-exists");
         assertNull(statisticsResult);
     }
 }

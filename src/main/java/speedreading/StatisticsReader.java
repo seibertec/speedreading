@@ -1,14 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package speedreading;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 
-public class MainClass {
+public class StatisticsReader {
 
     public static class StatisticsResult {
 
@@ -48,11 +43,11 @@ public class MainClass {
         if (args == null || args.length != 1) {
             System.out.println("Usage: genau ein Argument für den Filename angeben, Du Dubbel!");
         } else {
-            MainClass.countWords(args[0]);
+            StatisticsReader.readStatistics(args[0]);
         }
     }
 
-    public static StatisticsResult countWords(String filePath) {
+    public static StatisticsResult readStatistics(String filePath) {
 
         BufferedReader reader = null;                               //Statistik wird erstellt
 
