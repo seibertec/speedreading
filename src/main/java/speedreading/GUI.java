@@ -1,20 +1,33 @@
 package speedreading;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.Scanner;
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import java.io.File;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GUI extends javax.swing.JFrame {
+
+    private MainClass.StatisticsResult statistics;
+    private String fileName;
+    private Thread myThread = null;
+    private int milisec = 1600;
 
     /**
      * Creates new form GUI
      */
     public GUI() {
+        this.statistics = new MainClass.StatisticsResult(0, 0, 0);
         initComponents();
+        statistikButton.setEnabled(false);
+        wpmButton.setEnabled(false);
+        startButton.setEnabled(false);
+        stopButton.setEnabled(false);
+
     }
 
-    // Lah-lah land !!!
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -24,67 +37,175 @@ public class GUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        chooseFileButton = new javax.swing.JButton();
+        statistikButton = new javax.swing.JButton();
+        wpmButton = new javax.swing.JButton();
+        startButton = new javax.swing.JButton();
+        stopButton = new javax.swing.JButton();
 
+        mainLabel = new javax.swing.JLabel();
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+//        StyledDocument doc = jLabel1.getStyledDocument();
+//        SimpleAttributeSet center = new SimpleAttributeSet();       //attribute set to control center alignment
+//        StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);   //Align text to the center
+//        doc.setParagraphAttributes(0, doc.getLength(), center, false);  //set formatting options
 
-        jButton1.setText("Choose File");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        chooseFileButton.setText("Choose File");
+
+        chooseFileButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                chooseFileButtonClicked(evt);
             }
         });
+
+        statistikButton = new javax.swing.JButton();
+        statistikButton.setText("Statistik");
+
+        statistikButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                statistikButtonClicked(evt);
+            }
+        });
+        wpmButton.setText("Wpm");
+
+        wpmButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                wpmButtonClicked(evt);
+            }
+        });
+        startButton.setText("Start");
+
+        startButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startButtonClicked(evt);
+            }
+        });
+        stopButton.setText("Stop");
+
+        stopButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stopButtonClicked(evt);
+            }
+        });
+
+        mainLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(stopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 278, Short.MAX_VALUE))
+                                .addComponent(chooseFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(wpmButton, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(statistikButton, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(35, 35, 35)
+                                .addComponent(mainLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 257, Short.MAX_VALUE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(chooseFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(statistikButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(wpmButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(82, 82, 82)
+                                .addComponent(mainLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 107, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(stopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         pack();
     }// </editor-fold>
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void chooseFileButtonClicked(java.awt.event.ActionEvent evt) {
         JButton open = new JButton();                                //File Reader
         JFileChooser chooser = new JFileChooser();
 
         // Chooser configuration
         chooser.setCurrentDirectory(new java.io.File("C:"));
-        chooser.setDialogTitle("Speed Reading - part 2");
+        chooser.setDialogTitle("Speed Reading");
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         // set *.txt as default selection
 
-        chooser.setFileFilter(new FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                // has f extension ".txt"
-                return false;
-            }
+        FileNameExtensionFilter txtFilter = new FileNameExtensionFilter("Text files (*.txt)", "txt");
+        // add filters
+        chooser.addChoosableFileFilter(txtFilter);
+        chooser.setFileFilter(txtFilter);
 
-            @Override
-            public String getDescription() {
-                return null;
-            }
-        });
-
-
-        if (chooser.showOpenDialog(open) == JFileChooser.APPROVE_OPTION){
-            //
+        if (chooser.showOpenDialog(open) == JFileChooser.APPROVE_OPTION) {
+            this.fileName = chooser.getSelectedFile().getAbsolutePath();  //Path wird Kopiert
+            mainLabel.setText("Chosen file: " + this.fileName);
+            this.statistics = MainClass.countWords(fileName);  
+            statistikButton.setEnabled(true);
+            wpmButton.setEnabled(true);
+            startButton.setEnabled(true);
         }
-        String fileName = chooser.getSelectedFile().getAbsolutePath();  //Path wird Kopiert
+    }
 
-        //Hier fehlt mir der Code zum Ausführen des Codes - NICHT MEHR!! ;) //
-        MainClass.StatisticsResult res = MainClass.countWords(fileName);
+    private void statistikButtonClicked(java.awt.event.ActionEvent evt) {
 
+        JOptionPane optionPane = new JOptionPane();
+        optionPane.setMessage(new Object[]{
+            "#characters: " + this.statistics.getCharCount(),
+            "#words: " + this.statistics.getWordCount(),
+            "#sentences: " + this.statistics.getSentenceCount(),});
+        optionPane.setMessageType(JOptionPane.INFORMATION_MESSAGE);
+        optionPane.setOptionType(JOptionPane.DEFAULT_OPTION);
+        JDialog dialog = optionPane.createDialog(this, "Text statistic");
+        dialog.setVisible(true);
+    }
+
+    private void wpmButtonClicked(java.awt.event.ActionEvent evt) {
+        JOptionPane optionPane = new JOptionPane();
+        JSlider slider = getSlider(optionPane);
+        optionPane.setMessage(new Object[]{"Select Words/min: ", slider});
+        optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
+        optionPane.setOptionType(JOptionPane.OK_CANCEL_OPTION);
+        JDialog dialog = optionPane.createDialog(this, "My Slider");
+        dialog.setVisible(true);
+        // hint on conversion problems!!
+        // Integer -> int
+        int wpm = ((Integer) optionPane.getInputValue()).intValue();
+        this.milisec = (int) ((60.0 / wpm) * 1000.0);
+        mainLabel.setText("Chosen wpm: " + wpm);
+    }
+
+    static JSlider getSlider(final JOptionPane optionPane) {
+        JSlider slider = new JSlider(JSlider.HORIZONTAL, 0, 700, 0);
+        slider.setMajorTickSpacing(100);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+        ChangeListener changeListener = new ChangeListener() {
+            public void stateChanged(ChangeEvent changeEvent) {
+                JSlider theSlider = (JSlider) changeEvent.getSource();
+                if (!theSlider.getValueIsAdjusting()) {
+                    optionPane.setInputValue(new Integer(theSlider.getValue()));
+                }
+            }
+        };
+        slider.addChangeListener(changeListener);
+        return slider;
+    }
+
+    private void startButtonClicked(java.awt.event.ActionEvent evt){
+        this.myThread = new Thread(new Reader(this.fileName, this.milisec));
+        this.myThread.start();
+        stopButton.setEnabled(true);
+    }
+
+    private void stopButtonClicked(java.awt.event.ActionEvent evt) {
+        this.myThread.stop();
+        
     }
 
     /**
@@ -122,7 +243,59 @@ public class GUI extends javax.swing.JFrame {
         });
     }
 
+    public class Reader implements Runnable {
+
+        private String fileName;
+        private int milisec;
+
+        public Reader(String fileName, int milisec) {
+            this.fileName = fileName;
+            this.milisec = milisec;
+        }
+
+        public void run() {
+            Scanner in = null;     //Scanner to read the file at chosen location
+            try {
+                in = new Scanner(new FileReader(fileName));
+            } catch (FileNotFoundException e) {   //ignore exception
+                e.printStackTrace();    //used to identify problems
+            }
+            int i = 0;       //Number of words in document
+            while (in.hasNextLine()) {        //read every line of file
+                in.next();      //move to next word
+                i++;            //increment word counter
+            }
+            in.close();     //Close Scanner after words have been counted
+
+            try {
+                in = new Scanner(new FileReader(fileName));     //New Scanner to start at top of file
+            } catch (FileNotFoundException e) {   //ignore exception
+                e.printStackTrace();    //used to identify problems
+            }
+            String[] word = new String[i];      //Array stores each word
+            int pause = milisec;
+            for (int k = 0; k < i; k++) { //loop cycles through every word in file
+                word[k] = in.next();
+                mainLabel.setText(word[k]);  //Set the word in the text pane to the word read from file
+                sleep(pause);     //call sleep method to add a pause after the word.
+            }
+        }
+    }
+
+    private void sleep(int i) {     //Adds a pause between words. i changes length of pause
+        try {
+            Thread.sleep(i);        //sleep thread for pause+n milliseconds
+        } catch (InterruptedException e) {   //exception needed for sleep
+            //do nothing
+        }
+    }
+
     // Variables declaration - do not modify
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton chooseFileButton;
+    private javax.swing.JButton statistikButton;
+    private javax.swing.JButton wpmButton;
+    private javax.swing.JButton startButton;
+    private javax.swing.JButton stopButton;
+    private javax.swing.JLabel mainLabel;
     // End of variables declaration
 }
