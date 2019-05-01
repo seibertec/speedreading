@@ -18,14 +18,6 @@ public class MainClassTest {
     }
 
     @Test
-    public void countWordsWithParserFailure() {
-        // get location of test file
-        String pathToTestFile = getClass().getResource("/textToRead-failure.txt").getFile();
-        MainClass.StatisticsResult statisticsResult = MainClass.countWords(pathToTestFile);
-        assertNull(statisticsResult);
-    }
-
-    @Test
     public void countWordsNonExistingFile() {
         MainClass.StatisticsResult statisticsResult = MainClass.countWords("does-not-exists");
         assertNull(statisticsResult);
