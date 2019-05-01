@@ -1,7 +1,8 @@
 package speedreading;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.Scanner;
 
 public class Reader implements Runnable {
@@ -20,14 +21,15 @@ public class Reader implements Runnable {
     public void run() {
 
         try {
-            Scanner in = new Scanner(new FileReader(fileName)); //Scanner to read the file at chosen location
+            InputStreamReader r = new InputStreamReader(new FileInputStream(fileName), "UTF-8");
+            Scanner in = new Scanner(r); //Scanner to read the file at chosen location
             while (in.hasNextLine() && in.hasNext()) {        //read every line of file
                 String nextWord = in.next();      //move to next word
                 readout(nextWord);        // call readout method to actually read the word
                 sleep(pauseInMillis);     // call sleep method to add a pause after the word.
             }
             in.close();     //Close Scanner after words have been read
-        } catch (FileNotFoundException e) {   //ignore exception
+        } catch (Exception e) {   //ignore exception
             e.printStackTrace();    //used to identify problems
         }
 
